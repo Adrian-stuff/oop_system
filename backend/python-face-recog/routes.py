@@ -136,28 +136,67 @@ def verify():
     except Exception as err:
         return jsonify({"exception": str(err)}), 400
 
+    # DeepFace can accept base64 strings, file paths, URLs, or numpy arrays directly
+    # If it's already a numpy array (from file upload), use it directly
+    # Otherwise, pass the string (base64, path, or URL) directly to DeepFace
+    processed_img = img
+
     try:
         df = service.verify(
-            img_path=img,
+            img_path=processed_img,
             model_name=input_args.get("model_name", "VGG-Face") if input_args else "VGG-Face",
-            detector_backend=input_args.get("detector_backend", "opencv") if input_args else "opencv",
-            distance_metric=input_args.get("distance_metric", "cosine") if input_args else "cosine",
+            detector_backend=input_args.get("detector_backend", "ssd") if input_args else "opencv",
+            distance_metric=input_args.get("distance_metric", "euclidean_l2") if input_args else "cosine",
             align=input_args.get("align", True) if input_args else True,
             enforce_detection=input_args.get("enforce_detection", True) if input_args else True,
             anti_spoofing=input_args.get("anti_spoofing", False) if input_args else False,
         )
     except ValueError as e:
-        if "Face could not be detected" in str(e):
+        error_msg = str(e)
+        # Check for various face detection error messages
+        if "Face could not be detected" in error_msg or "could not be detected" in error_msg.lower():
             return jsonify({
                 "verified": False,
                 "id": None,
-                "reason": "No face detected in the input image.",
-            }), 400
-        logger.error(f"DeepFace ValueError: {str(e)}")
-        return jsonify({"error": "Verification failed due to image processing issue."}), 400
+                "reason": "No face detected in the input image. Please ensure the photo contains a clear face.",
+            }), 200  # Return 200 to match expected format
+        # Handle DeepFace internal errors (e.g., length mismatch - known DeepFace bug)
+        if "Length of values" in error_msg or "does not match length" in error_msg or "confidence" in error_msg.lower():
+            logger.error(f"DeepFace internal error (known bug with multiple images in database): {error_msg}")
+            return jsonify({
+                "verified": False,
+                "id": None,
+                "reason": "Face recognition service encountered an internal error. This may occur when there are multiple images stored for a person in the database. Please contact support.",
+            }), 200
+        logger.error(f"DeepFace ValueError: {error_msg}")
+        return jsonify({
+            "verified": False,
+            "id": None,
+            "reason": f"Image processing error: {error_msg}"
+        }), 200
     except Exception as e:
-        logger.error(f"DeepFace service error: {str(e)}")
-        return jsonify({"error": "Internal verification service error."}), 500
+        error_msg = str(e)
+        # Check if it's a face detection error in any exception type
+        if "Face could not be detected" in error_msg or "could not be detected" in error_msg.lower():
+            return jsonify({
+                "verified": False,
+                "id": None,
+                "reason": "No face detected in the input image. Please ensure the photo contains a clear face.",
+            }), 200
+        # Handle DeepFace internal errors (e.g., length mismatch - known DeepFace bug)
+        if "Length of values" in error_msg or "does not match length" in error_msg or "confidence" in error_msg.lower():
+            logger.error(f"DeepFace internal error (known bug with multiple images in database): {error_msg}")
+            return jsonify({
+                "verified": False,
+                "id": None,
+                "reason": "Face recognition service encountered an internal error. This may occur when there are multiple images stored for a person in the database. Please contact support.",
+            }), 200
+        logger.error(f"DeepFace service error: {error_msg}")
+        return jsonify({
+            "verified": False,
+            "id": None,
+            "reason": f"Internal verification service error: {error_msg}"
+        }), 200
 
     if not df or len(df) == 0:
         return jsonify({

@@ -18,12 +18,14 @@ namespace oop_backend.Controllers
     public class AttendancesController : ControllerBase
     {
         private readonly AttendanceContext _context;
+        private readonly UserDataContext _userContext;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
 
-        public AttendancesController(AttendanceContext context, IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public AttendancesController(AttendanceContext context, UserDataContext userContext, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _context = context;
+            _userContext = userContext;
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
         }
@@ -80,11 +82,18 @@ namespace oop_backend.Controllers
             return NoContent();
         }
 
-        // POST: api/Attendances
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Attendance>> PostAttendance(AttendanceRequest request)
+        // POST: api/Attendances/recordAttendance
+        [HttpPost("recordAttendance")]
+        public async Task<ActionResult<Attendance>> RecordAttendance(RecordAttendanceRequest request)
         {
+            // Validate type
+            if (request.Type != "time-in" && request.Type != "time-out")
+            {
+                return BadRequest(new { 
+                    error = "Invalid type. Type must be 'time-in' or 'time-out'"
+                });
+            }
+
             // Call Python face recognition service to verify the face
             int? userId = null;
             
@@ -192,17 +201,63 @@ namespace oop_backend.Controllers
                 });
             }
 
-            // Create attendance record
+            // Verify that the user exists in the database
+            var userExists = await _userContext.Users.AnyAsync(u => u.userID == userId);
+            if (!userExists)
+            {
+                return BadRequest(new { 
+                    error = "User not found in database",
+                    userId = userId,
+                    message = "The user ID returned from face recognition does not exist in the users table"
+                });
+            }
+
+            // Check if the user already has a record for this type today
             var now = DateTime.Now;
+            var todayDate = now.ToString("yyyy-MM-dd");
+            
+            var existingAttendance = await _context.Attendance
+                .FirstOrDefaultAsync(a => 
+                    a.userID == userId.Value && 
+                    a.eventDate == todayDate && 
+                    a.status == request.Type);
+
+            if (existingAttendance != null)
+            {
+                var typeDisplay = request.Type == "time-in" ? "time-in" : "time-out";
+                return BadRequest(new { 
+                    error = $"{typeDisplay} already recorded",
+                    message = $"You have already recorded a {typeDisplay} for today",
+                    existingRecord = new {
+                        attendanceID = existingAttendance.attendanceID,
+                        eventDate = existingAttendance.eventDate,
+                        eventTime = existingAttendance.eventTime,
+                        status = existingAttendance.status
+                    }
+                });
+            }
+
+            // Create attendance record
             var attendance = new Attendance
             {
                 userID = userId.Value,
-                eventDate = now.ToString("yyyy-MM-dd"),
+                eventDate = todayDate,
                 eventTime = now.ToString("HH:mm:ss"),
-                status = request.Status ?? "Present"
+                status = request.Type
             };
 
             // Save attendance to database
+            _context.Attendance.Add(attendance);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAttendance", new { id = attendance.attendanceID }, attendance);
+        }
+
+        // POST: api/Attendances
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Attendance>> PostAttendance(Attendance attendance)
+        {
             _context.Attendance.Add(attendance);
             await _context.SaveChangesAsync();
 
