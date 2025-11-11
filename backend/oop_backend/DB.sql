@@ -4,7 +4,8 @@ CREATE TABLE users (
 	firstName VARCHAR(50) NOT NULL,
 	lastName VARCHAR(50) NOT NULL,
 	email VARCHAR(100) NOT NULL UNIQUE,
-	birthDate DATE
+	birthDate DATE,
+	studentNumber VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE attendance (

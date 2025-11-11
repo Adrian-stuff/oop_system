@@ -20,5 +20,8 @@ public class RegisterUserRequest
     [Required]
     [DataType(DataType.Date)]
     public required string BirthDate { get; set; }
+    
+    [Required]
+    public required string StudentNumber { get; set; }
 }
 

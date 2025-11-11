@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -82,15 +83,54 @@ namespace oop_backend.Controllers
         // POST: api/UserDatas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserData>> PostUserData(RegisterUserRequest request)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<UserData>> PostUserData(
+            [FromForm] IFormFile Photo,
+            [FromForm] string FirstName,
+            [FromForm] string LastName,
+            [FromForm] string Email,
+            [FromForm] string BirthDate,
+            [FromForm] string? StudentNumber = null)
         {
+            if (Photo == null || Photo.Length == 0)
+            {
+                return BadRequest(new { error = "Photo is required" });
+            }
+
+            // Read image into memory (stream can only be read once)
+            byte[] imageBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                await Photo.CopyToAsync(memoryStream);
+                imageBytes = memoryStream.ToArray();
+            }
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(FirstName))
+            {
+                return BadRequest(new { error = "FirstName is required" });
+            }
+            if (string.IsNullOrWhiteSpace(LastName))
+            {
+                return BadRequest(new { error = "LastName is required" });
+            }
+            if (string.IsNullOrWhiteSpace(Email))
+            {
+                return BadRequest(new { error = "Email is required" });
+            }
+            if (string.IsNullOrWhiteSpace(BirthDate))
+            {
+                return BadRequest(new { error = "BirthDate is required" });
+            }
+
             // Create UserData from request
             var userData = new UserData
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                BirthDate = request.BirthDate
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = Email,
+                BirthDate = BirthDate,
+                StudentNumber = !string.IsNullOrWhiteSpace(StudentNumber) ? StudentNumber : Email // Use email as fallback if StudentNumber not provided
             };
 
             // Save user to database
@@ -110,16 +150,21 @@ namespace oop_backend.Controllers
                 var faceServiceUrl = _configuration["FaceRecognitionServiceUrl"] ?? "http://127.0.0.1:5000";
                 var httpClient = _httpClientFactory.CreateClient();
                 
-                // Prepare the request body for Python service
-                var requestBody = new
-                {
-                    img = request.Photo,
-                    id = userId.ToString()
-                };
+                // Prepare multipart/form-data for Python service
+                using var formData = new MultipartFormDataContent();
+                
+                // Add image file
+                var fileContent = new ByteArrayContent(imageBytes);
+                string contentType = !string.IsNullOrEmpty(Photo.ContentType) ? Photo.ContentType : "image/jpeg";
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+                formData.Add(fileContent, "img", Photo.FileName ?? "face.jpg");
+                
+                // Add user ID as form field
+                formData.Add(new StringContent(userId.ToString()!), "id");
 
-                var response = await httpClient.PostAsJsonAsync(
+                var response = await httpClient.PostAsync(
                     $"{faceServiceUrl}/addFace?id={userId}",
-                    requestBody
+                    formData
                 );
 
                 if (!response.IsSuccessStatusCode)

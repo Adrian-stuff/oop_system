@@ -29,13 +29,14 @@ namespace oop_backend
         }
         public int RegisterUser(UserData userData)
         {
-            string sql = "INSERT INTO users (firstName, lastName, email, birthDate) VALUES (@firstName, @lastName, @email, @birthDate)";
+            string sql = "INSERT INTO users (firstName, lastName, email, birthDate, studentNumber) VALUES (@firstName, @lastName, @email, @birthDate, @studentNumber)";
             var parameters = new Dictionary<string, object>
             {
                 {"@firstName", userData.FirstName},
                 {"@lastName", userData.LastName},
                 {"@email", userData.Email},
-                {"@birthDate", userData.BirthDate}
+                {"@birthDate", userData.BirthDate},
+                {"@studentNumber", userData.StudentNumber}
             };
             var status = this.ExecuteNonQuery(sql, parameters);
             return status;

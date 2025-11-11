@@ -79,7 +79,7 @@ def addFace():
         image_to_save = None
 
         if isinstance(img1_data, np.ndarray):
-            img1_data_rgb = img1_data[:, :, ::-1]  # Swaps the 0 and 2 channel (B and R)
+            img1_data_rgb = img1_data[:, :, ::-1]
             image_to_save = Image.fromarray(img1_data_rgb.astype("uint8"))
         elif isinstance(img1_data, str):
             if "," in img1_data:
@@ -136,31 +136,24 @@ def verify():
     except Exception as err:
         return jsonify({"exception": str(err)}), 400
 
-    # DeepFace can accept base64 strings, file paths, URLs, or numpy arrays directly
-    # If it's already a numpy array (from file upload), use it directly
-    # Otherwise, pass the string (base64, path, or URL) directly to DeepFace
-    processed_img = img
-
     try:
         df = service.verify(
-            img_path=processed_img,
-            model_name=input_args.get("model_name", "VGG-Face") if input_args else "VGG-Face",
-            detector_backend=input_args.get("detector_backend", "ssd") if input_args else "opencv",
-            distance_metric=input_args.get("distance_metric", "euclidean_l2") if input_args else "cosine",
-            align=input_args.get("align", True) if input_args else True,
-            enforce_detection=input_args.get("enforce_detection", True) if input_args else True,
-            anti_spoofing=input_args.get("anti_spoofing", False) if input_args else False,
+            img_path=img,
+            model_name=input_args.get("model_name", "VGG-Face") ,
+            detector_backend=input_args.get("detector_backend", "ssd") ,
+            distance_metric=input_args.get("distance_metric", "euclidean_l2") ,
+            align=input_args.get("align", True) ,
+            enforce_detection=input_args.get("enforce_detection", True) ,
+            anti_spoofing=input_args.get("anti_spoofing", False) 
         )
     except ValueError as e:
         error_msg = str(e)
-        # Check for various face detection error messages
         if "Face could not be detected" in error_msg or "could not be detected" in error_msg.lower():
             return jsonify({
                 "verified": False,
                 "id": None,
                 "reason": "No face detected in the input image. Please ensure the photo contains a clear face.",
-            }), 200  # Return 200 to match expected format
-        # Handle DeepFace internal errors (e.g., length mismatch - known DeepFace bug)
+            }), 200
         if "Length of values" in error_msg or "does not match length" in error_msg or "confidence" in error_msg.lower():
             logger.error(f"DeepFace internal error (known bug with multiple images in database): {error_msg}")
             return jsonify({
@@ -176,14 +169,12 @@ def verify():
         }), 200
     except Exception as e:
         error_msg = str(e)
-        # Check if it's a face detection error in any exception type
         if "Face could not be detected" in error_msg or "could not be detected" in error_msg.lower():
             return jsonify({
                 "verified": False,
                 "id": None,
                 "reason": "No face detected in the input image. Please ensure the photo contains a clear face.",
             }), 200
-        # Handle DeepFace internal errors (e.g., length mismatch - known DeepFace bug)
         if "Length of values" in error_msg or "does not match length" in error_msg or "confidence" in error_msg.lower():
             logger.error(f"DeepFace internal error (known bug with multiple images in database): {error_msg}")
             return jsonify({
@@ -228,6 +219,5 @@ def verify():
 
     logger.debug(result_df)
 
-    # Convert DataFrame to JSON and return
     result_json = result_df.to_json(orient="records")
     return jsonify(json.loads(result_json)), 200

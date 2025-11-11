@@ -242,7 +242,7 @@ namespace frontend
 
                 // Crop the first detected face
                 Rectangle faceRect = faces[0];
-                int padding = 20;
+                int padding = 50; 
                 int x = Math.Max(0, faceRect.X - padding);
                 int y = Math.Max(0, faceRect.Y - padding);
                 int width = Math.Min(frame.Width - x, faceRect.Width + padding * 2);
@@ -250,20 +250,43 @@ namespace frontend
 
                 using Mat croppedFace = new Mat(frame, new Rectangle(x, y, width, height));
                 using Bitmap faceBitmap = MatToBitmap(croppedFace);
-                string base64Image = BitmapToBase64(faceBitmap);
 
-                // Prepare registration request
-                var request = new
+                // Prepare multipart/form-data
+                using var formData = new MultipartFormDataContent();
+                
+                // Convert bitmap to byte array
+                byte[] imageBytes;
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    Photo = base64Image,
-                    FirstName = firstNameTextBox.Text.Trim(),
-                    LastName = lastNameTextBox.Text.Trim(),
-                    Email = emailTextBox.Text.Trim(),
-                    BirthDate = birthDatePicker.Value.ToString("yyyy-MM-dd")
-                };
+                    var jpegEncoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(codec => codec.FormatID == ImageFormat.Jpeg.Guid);
+                    if (jpegEncoder != null)
+                    {
+                        var encoderParams = new EncoderParameters(1);
+                        encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, (long)90);
+                        faceBitmap.Save(ms, jpegEncoder, encoderParams);
+                    }
+                    else
+                    {
+                        faceBitmap.Save(ms, ImageFormat.Jpeg);
+                    }
+                    imageBytes = ms.ToArray();
+                }
+                
+                // Add image file
+                var imageContent = new ByteArrayContent(imageBytes);
+                imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                formData.Add(imageContent, "Photo", "face.jpg");
+                
+                // Add form fields
+                formData.Add(new StringContent(firstNameTextBox.Text.Trim()), "FirstName");
+                formData.Add(new StringContent(lastNameTextBox.Text.Trim()), "LastName");
+                formData.Add(new StringContent(emailTextBox.Text.Trim()), "Email");
+                formData.Add(new StringContent(birthDatePicker.Value.ToString("yyyy-MM-dd")), "BirthDate");
+                // StudentNumber is optional - backend will use Email as fallback if not provided
+                formData.Add(new StringContent(""), "StudentNumber");
 
                 statusLabel.Text = "Registering user...";
-                var response = await _httpClient.PostAsJsonAsync(_apiBaseUrl, request);
+                var response = await _httpClient.PostAsync(_apiBaseUrl, formData);
 
                 if (response.IsSuccessStatusCode)
                 {

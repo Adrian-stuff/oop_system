@@ -40,7 +40,6 @@ def verify(
                 align=align,
                 enforce_detection=enforce_detection,
                 anti_spoofing=anti_spoofing,
-                silent=True,
             )
             return obj
         except (ValueError, KeyError) as ve:

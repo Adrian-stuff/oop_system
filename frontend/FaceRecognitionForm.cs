@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -300,8 +301,7 @@ namespace frontend
 
             try
             {
-                // Crop face with some padding
-                int padding = 20;
+                int padding = 50;
                 int x = Math.Max(0, faceRect.X - padding);
                 int y = Math.Max(0, faceRect.Y - padding);
                 int width = Math.Min(frame.Width - x, faceRect.Width + padding * 2);
@@ -309,22 +309,46 @@ namespace frontend
 
                 using Mat croppedFace = new Mat(frame, new Rectangle(x, y, width, height));
 
-                // Convert to base64
+                // Convert to bitmap
                 using Bitmap faceBitmap = MatToBitmap(croppedFace);
-                string base64Image = BitmapToBase64(faceBitmap);
+                
+                // Display the cropped face image (create a copy for display)
+                DisplayCapturedFace(new Bitmap(faceBitmap));
 
                 // Get selected mode and convert to backend format
                 string type = modeComboBox.SelectedItem?.ToString() == "Time In" ? "time-in" : "time-out";
 
-                // Send to backend
-                var request = new
+                // Prepare multipart/form-data
+                using var formData = new MultipartFormDataContent();
+                
+                // Convert bitmap to byte array
+                byte[] imageBytes;
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    Photo = base64Image,
-                    Type = type
-                };
+                    var jpegEncoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(codec => codec.FormatID == ImageFormat.Jpeg.Guid);
+                    if (jpegEncoder != null)
+                    {
+                        var encoderParams = new EncoderParameters(1);
+                        encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, (long)90);
+                        faceBitmap.Save(ms, jpegEncoder, encoderParams);
+                    }
+                    else
+                    {
+                        faceBitmap.Save(ms, ImageFormat.Jpeg);
+                    }
+                    imageBytes = ms.ToArray();
+                }
+                
+                // Add image file
+                var imageContent = new ByteArrayContent(imageBytes);
+                imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                formData.Add(imageContent, "Photo", "face.jpg");
+                
+                // Add type field
+                formData.Add(new StringContent(type), "Type");
 
                 UpdateLoading("Sending to server...");
-                var response = await _httpClient.PostAsJsonAsync(_apiBaseUrl, request);
+                var response = await _httpClient.PostAsync(_apiBaseUrl, formData);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -401,6 +425,19 @@ namespace frontend
                 return;
             }
             loadingLabel.Text = message;
+        }
+
+        private void DisplayCapturedFace(Bitmap faceBitmap)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<Bitmap>(DisplayCapturedFace), faceBitmap);
+                return;
+            }
+            
+            var oldImage = capturedFaceView.Image;
+            capturedFaceView.Image = new Bitmap(faceBitmap);
+            oldImage?.Dispose();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

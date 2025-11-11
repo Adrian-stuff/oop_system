@@ -30,6 +30,7 @@ namespace frontend
         {
             components = new System.ComponentModel.Container();
             cameraView = new PictureBox();
+            capturedFaceView = new PictureBox();
             modeLabel = new Label();
             modeComboBox = new ComboBox();
             statusLabel = new Label();
@@ -39,6 +40,7 @@ namespace frontend
             registerButton = new Button();
             frameTimer = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)cameraView).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)capturedFaceView).BeginInit();
             SuspendLayout();
             // 
             // cameraView
@@ -52,6 +54,18 @@ namespace frontend
             cameraView.SizeMode = PictureBoxSizeMode.Zoom;
             cameraView.TabIndex = 0;
             cameraView.TabStop = false;
+            // 
+            // capturedFaceView
+            // 
+            capturedFaceView.BackColor = Color.Black;
+            capturedFaceView.BorderStyle = BorderStyle.FixedSingle;
+            capturedFaceView.Location = new Point(520, 13);
+            capturedFaceView.Margin = new Padding(3, 4, 3, 4);
+            capturedFaceView.Name = "capturedFaceView";
+            capturedFaceView.Size = new Size(200, 200);
+            capturedFaceView.SizeMode = PictureBoxSizeMode.Zoom;
+            capturedFaceView.TabIndex = 8;
+            capturedFaceView.TabStop = false;
             // 
             // modeLabel
             // 
@@ -136,7 +150,8 @@ namespace frontend
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(526, 640);
+            ClientSize = new Size(732, 640);
+            Controls.Add(capturedFaceView);
             Controls.Add(registerButton);
             Controls.Add(stopButton);
             Controls.Add(startButton);
@@ -152,6 +167,7 @@ namespace frontend
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Face Recognition Attendance";
             ((System.ComponentModel.ISupportInitialize)cameraView).EndInit();
+            ((System.ComponentModel.ISupportInitialize)capturedFaceView).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -159,6 +175,7 @@ namespace frontend
         #endregion
 
         private System.Windows.Forms.PictureBox cameraView;
+        private System.Windows.Forms.PictureBox capturedFaceView;
         private System.Windows.Forms.Label modeLabel;
         private System.Windows.Forms.ComboBox modeComboBox;
         private System.Windows.Forms.Label statusLabel;

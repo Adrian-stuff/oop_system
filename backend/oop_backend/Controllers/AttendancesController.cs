@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -84,14 +85,28 @@ namespace oop_backend.Controllers
 
         // POST: api/Attendances/recordAttendance
         [HttpPost("recordAttendance")]
-        public async Task<ActionResult<Attendance>> RecordAttendance(RecordAttendanceRequest request)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<Attendance>> RecordAttendance([FromForm] IFormFile Photo, [FromForm] string Type)
         {
             // Validate type
-            if (request.Type != "time-in" && request.Type != "time-out")
+            if (Type != "time-in" && Type != "time-out")
             {
                 return BadRequest(new { 
                     error = "Invalid type. Type must be 'time-in' or 'time-out'"
                 });
+            }
+
+            if (Photo == null || Photo.Length == 0)
+            {
+                return BadRequest(new { error = "Photo is required" });
+            }
+
+            // Read image into memory (stream can only be read once)
+            byte[] imageBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                await Photo.CopyToAsync(memoryStream);
+                imageBytes = memoryStream.ToArray();
             }
 
             // Call Python face recognition service to verify the face
@@ -102,15 +117,18 @@ namespace oop_backend.Controllers
                 var faceServiceUrl = _configuration["FaceRecognitionServiceUrl"] ?? "http://127.0.0.1:5000";
                 var httpClient = _httpClientFactory.CreateClient();
                 
-                // Prepare the request body for Python service
-                var requestBody = new
-                {
-                    img = request.Photo
-                };
+                // Prepare multipart/form-data for Python service
+                using var formData = new MultipartFormDataContent();
+                
+                // Add image file
+                var fileContent = new ByteArrayContent(imageBytes);
+                string contentType = !string.IsNullOrEmpty(Photo.ContentType) ? Photo.ContentType : "image/jpeg";
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+                formData.Add(fileContent, "img", Photo.FileName ?? "face.jpg");
 
-                var response = await httpClient.PostAsJsonAsync(
+                var response = await httpClient.PostAsync(
                     $"{faceServiceUrl}/verify",
-                    requestBody
+                    formData
                 );
 
                 if (!response.IsSuccessStatusCode)
@@ -220,11 +238,11 @@ namespace oop_backend.Controllers
                 .FirstOrDefaultAsync(a => 
                     a.userID == userId.Value && 
                     a.eventDate == todayDate && 
-                    a.status == request.Type);
+                    a.status == Type);
 
             if (existingAttendance != null)
             {
-                var typeDisplay = request.Type == "time-in" ? "time-in" : "time-out";
+                var typeDisplay = Type == "time-in" ? "time-in" : "time-out";
                 return BadRequest(new { 
                     error = $"{typeDisplay} already recorded",
                     message = $"You have already recorded a {typeDisplay} for today",
@@ -243,7 +261,7 @@ namespace oop_backend.Controllers
                 userID = userId.Value,
                 eventDate = todayDate,
                 eventTime = now.ToString("HH:mm:ss"),
-                status = request.Type
+                status = Type
             };
 
             // Save attendance to database
