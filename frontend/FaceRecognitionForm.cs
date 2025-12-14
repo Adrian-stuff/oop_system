@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,6 +31,14 @@ namespace frontend
             _attendanceService = ServiceFactory.CreateAttendanceService(_httpClient);
             _userDataService = ServiceFactory.CreateUserDataService(_httpClient);
 
+            // UI Setup for Circular Camera
+            cameraView.SizeMode = PictureBoxSizeMode.StretchImage;
+            MakeControlCircular(cameraView);
+            cameraView.SizeChanged += (s, e) => MakeControlCircular(cameraView);
+            GraphicsPath path = new GraphicsPath();
+            path.AddEllipse(0, 0, cameraView.Width, cameraView.Height);
+            cameraView.Region = new Region(path);
+
             // Create event handler for face detection events
             _eventHandler = ServiceFactory.CreateFaceDetectionEventHandler(
                 onFaceCaptured: DisplayCapturedFace,
@@ -54,6 +63,13 @@ namespace frontend
 
             // Initialize face detector in background
             Task.Run(async () => await _faceDetector.InitializeAsync());
+        }
+
+        private void MakeControlCircular(Control control)
+        {
+            using GraphicsPath path = new GraphicsPath();
+            path.AddEllipse(0, 0, control.Width, control.Height);
+            control.Region = new Region(path);
         }
 
         // Face detector/cascade initialization has been moved to the face detector service (IFaceDetector).

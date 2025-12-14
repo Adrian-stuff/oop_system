@@ -51,6 +51,23 @@ namespace frontend.Services
 
             return attendance;
         }
+
+        public async Task<System.Collections.Generic.List<AttendanceResponse>> GetAttendancesAsync()
+        {
+            var response = await _httpClient.GetAsync(_apiBaseUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Failed to retrieve attendances: {response.StatusCode} - {errorContent}");
+            }
+
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var attendances = JsonSerializer.Deserialize<System.Collections.Generic.List<AttendanceResponse>>(result, options);
+
+            return attendances ?? new System.Collections.Generic.List<AttendanceResponse>();
+        }
     }
 }
 

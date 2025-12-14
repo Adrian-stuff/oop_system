@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -34,10 +35,36 @@ namespace frontend
             _cameraService.StatusChanged += OnCameraStatusChanged;
             _faceDetector.StatusChanged += OnFaceDetectorStatusChanged;
 
+            // UI Setup
+            cameraView.SizeMode = PictureBoxSizeMode.StretchImage;
+            MakeControlCircular(cameraView);
+            cameraView.SizeChanged += (s, e) => MakeControlCircular(cameraView);
+
+            // Curved Box Setup
+            int cornerRadius = 30;
+            GraphicsPath path1 = new GraphicsPath();
+            int diameter = cornerRadius * 2;
+            int w = picturebox2.Width;
+            int h = picturebox2.Height;
+
+            path1.AddArc(0, 0, diameter, diameter, 180, 90);
+            path1.AddArc(w - diameter, 0, diameter, diameter, 270, 90);
+            path1.AddArc(w - diameter, h - diameter, diameter, diameter, 0, 90);
+            path1.AddArc(0, h - diameter, diameter, diameter, 90, 90);
+            path1.CloseFigure();
+            picturebox2.Region = new Region(path1);
+
             // Initialize face detector
             frameTimer.Interval = 33;
             frameTimer.Tick += FrameTimer_Tick;
             Task.Run(async () => await _faceDetector.InitializeAsync());
+        }
+
+        private void MakeControlCircular(Control control)
+        {
+            using GraphicsPath path = new GraphicsPath();
+            path.AddEllipse(0, 0, control.Width, control.Height);
+            control.Region = new Region(path);
         }
 
         private void RegisterForm_Load(object? sender, EventArgs e)
@@ -236,7 +263,7 @@ namespace frontend
                     lastNameTextBox.Text.Trim(),
                     emailTextBox.Text.Trim(),
                     birthDatePicker.Value.ToString("yyyy-MM-dd"),
-                    studentNumberTextBox.Text.Trim()
+                    "" // Student Number removed in New UI
                 );
 
                 MessageBox.Show("User registered successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -247,7 +274,7 @@ namespace frontend
                 lastNameTextBox.Clear();
                 emailTextBox.Clear();
                 birthDatePicker.Value = DateTime.Now.AddYears(-25);
-                studentNumberTextBox.Clear();
+                birthDatePicker.Value = DateTime.Now.AddYears(-25);
             }
             catch (Exception ex)
             {

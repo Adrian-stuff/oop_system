@@ -37,10 +37,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- Exclude duplicate 'new ui' files which were merged into main form -->
-    <Compile Remove="new ui\**" />
-    <EmbeddedResource Remove="new ui\**" />
-  </ItemGroup>
-
 </Project>

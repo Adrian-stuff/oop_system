@@ -14,6 +14,12 @@ namespace frontend.Services
         /// <param name="type">The attendance type ("time-in" or "time-out")</param>
         /// <returns>Attendance response containing userID and attendance details</returns>
         Task<AttendanceResponse> RecordAttendanceAsync(byte[] faceImageBytes, string type);
+
+        /// <summary>
+        /// Retrieves all attendance records.
+        /// </summary>
+        /// <returns>A list of attendance records.</returns>
+        Task<System.Collections.Generic.List<AttendanceResponse>> GetAttendancesAsync();
     }
 
     /// <summary>

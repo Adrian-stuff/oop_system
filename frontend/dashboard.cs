@@ -9,39 +9,31 @@ namespace frontend
 {
     public partial class Dashboard : Form
     {
+        private readonly Services.IAttendanceService _attendanceService;
+
         public Dashboard()
         {
             InitializeComponent();
+            string apiBaseUrl = "https://localhost:5001/api/Attendances";
+            _attendanceService = new Services.AttendanceService(new HttpClient(), apiBaseUrl);
         }
 
         private async void dashboard_Load(object sender, EventArgs e)
         {
-            await LoadUsersAsync();
+            await LoadAttendancesAsync();
         }
 
-        private async Task LoadUsersAsync()
+        private async Task LoadAttendancesAsync()
         {
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    string url = "https://localhost:5001/api/users"; // CHANGE PORT IF NEEDED
-
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-
-                    string json = await response.Content.ReadAsStringAsync();
-
-                    DataTable table =
-                        JsonSerializer.Deserialize<DataTable>(json);
-
-                    dataGridView1.AutoGenerateColumns = true;
-                    dataGridView1.DataSource = table;
-                }
+                var attendances = await _attendanceService.GetAttendancesAsync();
+                dataGridView1.AutoGenerateColumns = true;
+                dataGridView1.DataSource = attendances;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Load Error");
+                MessageBox.Show($"Error loading attendances: {ex.Message}", "Load Error");
             }
         }
     }
