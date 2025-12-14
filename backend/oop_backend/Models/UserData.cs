@@ -12,7 +12,7 @@ public class UserData
     public required string LastName { get; set; }
     public required string Email { get; set; }
     [DataType(DataType.Date)]
-    public required string BirthDate { get; set; }
+    public required DateTime BirthDate { get; set; }
     public required string StudentNumber { get; set; }
 
 }

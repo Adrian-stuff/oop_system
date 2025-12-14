@@ -31,6 +31,12 @@ namespace frontend.Services
             string email,
             string birthDate,
             string? studentNumber = null);
+
+        /// <summary>
+        /// Fetches all registered users.
+        /// </summary>
+        /// <returns>List of users</returns>
+        Task<System.Collections.Generic.List<UserDataResponse>> GetUsersAsync();
     }
 
     /// <summary>

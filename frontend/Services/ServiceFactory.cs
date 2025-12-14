@@ -8,7 +8,7 @@ namespace frontend.Services
     /// </summary>
     public static class ServiceFactory
     {
-        private const string DefaultAttendanceApiUrl = "http://localhost:5207/api/Attendances/recordAttendance";
+        private const string DefaultAttendanceApiUrl = "http://localhost:5207/api/Attendances";
         private const string DefaultUserDataApiUrl = "http://localhost:5207/api/UserDatas";
 
         /// <summary>

@@ -21,43 +21,46 @@ namespace frontend.Services
 
         public event EventHandler<string>? StatusChanged;
 
-        public async Task InitializeAsync()
+        public Task InitializeAsync()
         {
-            try
+            return Task.Run(async () =>
             {
-                // Try multiple locations for the Haar Cascade file
-                string[] possiblePaths = new[]
+                try
                 {
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml"),
-                    Path.Combine(Environment.CurrentDirectory, "haarcascade_frontalface_default.xml"),
-                    "haarcascade_frontalface_default.xml"
-                };
-
-                string? cascadePath = null;
-                foreach (var path in possiblePaths)
-                {
-                    string fullPath = Path.IsPathRooted(path) ? path : Path.GetFullPath(path);
-                    if (File.Exists(fullPath))
+                    // Try multiple locations for the Haar Cascade file
+                    string[] possiblePaths = new[]
                     {
-                        cascadePath = fullPath;
-                        break;
+                        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml"),
+                        Path.Combine(Environment.CurrentDirectory, "haarcascade_frontalface_default.xml"),
+                        "haarcascade_frontalface_default.xml"
+                    };
+
+                    string? cascadePath = null;
+                    foreach (var path in possiblePaths)
+                    {
+                        string fullPath = Path.IsPathRooted(path) ? path : Path.GetFullPath(path);
+                        if (File.Exists(fullPath))
+                        {
+                            cascadePath = fullPath;
+                            break;
+                        }
+                    }
+
+                    if (cascadePath != null)
+                    {
+                        LoadCascadeFromPath(cascadePath);
+                    }
+                    else
+                    {
+                        // Try to download the cascade file
+                        await DownloadCascadeFileAsync();
                     }
                 }
-
-                if (cascadePath != null)
+                catch (Exception ex)
                 {
-                    LoadCascadeFromPath(cascadePath);
+                    OnStatusChanged($"Error loading face detector: {ex.Message}");
                 }
-                else
-                {
-                    // Try to download the cascade file
-                    await DownloadCascadeFileAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                OnStatusChanged($"Error loading face detector: {ex.Message}");
-            }
+            });
         }
 
         private void LoadCascadeFromPath(string path)

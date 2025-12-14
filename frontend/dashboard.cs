@@ -14,7 +14,7 @@ namespace frontend
         public Dashboard()
         {
             InitializeComponent();
-            string apiBaseUrl = "https://localhost:5001/api/Attendances";
+            string apiBaseUrl = "http://localhost:5207/api/Attendances";
             _attendanceService = new Services.AttendanceService(new HttpClient(), apiBaseUrl);
         }
 
@@ -28,13 +28,22 @@ namespace frontend
             try
             {
                 var attendances = await _attendanceService.GetAttendancesAsync();
+                
                 dataGridView1.AutoGenerateColumns = true;
                 dataGridView1.DataSource = attendances;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading attendances: {ex.Message}", "Load Error");
+                MessageBox.Show("Failed to load attendances: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnViewUsers_Click(object sender, EventArgs e)
+        {
+          
+            var userDataService = new Services.UserDataService(new System.Net.Http.HttpClient(), "http://localhost:5207/api/UserDatas");
+            var userListForm = new UserListForm(userDataService);
+            userListForm.ShowDialog(this);
         }
     }
 }

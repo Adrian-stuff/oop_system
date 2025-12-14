@@ -123,14 +123,30 @@ namespace oop_backend.Controllers
                 return BadRequest(new { error = "BirthDate is required" });
             }
 
+            // Generate Student Number: 24-XXXX
+            var lastUser = await _context.Users
+                .Where(u => u.StudentNumber.StartsWith("24-"))
+                .OrderByDescending(u => u.StudentNumber)
+                .FirstOrDefaultAsync();
+
+            string nextStudentNumber = "24-0000";
+            if (lastUser != null)
+            {
+                var parts = lastUser.StudentNumber.Split('-');
+                if (parts.Length == 2 && int.TryParse(parts[1], out int lastNum))
+                {
+                    nextStudentNumber = $"24-{(lastNum + 1):D4}";
+                }
+            }
+
             // Create UserData from request
             var userData = new UserData
             {
                 FirstName = FirstName,
                 LastName = LastName,
                 Email = Email,
-                BirthDate = BirthDate,
-                StudentNumber = !string.IsNullOrWhiteSpace(StudentNumber) ? StudentNumber : Email // Use email as fallback if StudentNumber not provided
+                BirthDate = DateTime.Parse(BirthDate),
+                StudentNumber = nextStudentNumber
             };
 
             // Save user to database
@@ -142,6 +158,26 @@ namespace oop_backend.Controllers
             if (userId == null)
             {
                 return StatusCode(500, new { error = "Failed to generate user ID" });
+            }
+
+            // Save image locally
+            try 
+            {
+                var imagesDir = Path.Combine(Directory.GetCurrentDirectory(), "Images", "Users");
+                if (!Directory.Exists(imagesDir))
+                {
+                    Directory.CreateDirectory(imagesDir);
+                }
+
+                var imagePath = Path.Combine(imagesDir, $"{userId}.jpg");
+                await System.IO.File.WriteAllBytesAsync(imagePath, imageBytes);
+            }
+            catch (Exception ex)
+            {
+                // Log warning but don't fail the request just for local save if remote succeeded?
+                // Actually, if we rely on this for the UI, we should probably care.
+                // But let's proceed to face recognition service first.
+                System.Diagnostics.Debug.WriteLine($"Failed to save local image: {ex.Message}");
             }
 
             // Call Python face recognition service to save the face
@@ -208,6 +244,22 @@ namespace oop_backend.Controllers
             }
 
             return CreatedAtAction("GetUserData", new { id = userData.userID }, userData);
+        }
+
+        // GET: api/UserDatas/5/photo
+        [HttpGet("{id}/photo")]
+        public IActionResult GetUserPhoto(int id)
+        {
+            var imagesDir = Path.Combine(Directory.GetCurrentDirectory(), "Images", "Users");
+            var imagePath = Path.Combine(imagesDir, $"{id}.jpg");
+
+            if (System.IO.File.Exists(imagePath))
+            {
+                var imageFileStream = System.IO.File.OpenRead(imagePath);
+                return File(imageFileStream, "image/jpeg");
+            }
+            
+            return NotFound();
         }
 
         // DELETE: api/UserDatas/5

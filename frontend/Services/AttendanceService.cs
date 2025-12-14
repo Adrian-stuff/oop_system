@@ -32,7 +32,7 @@ namespace frontend.Services
             // Add type
             formData.Add(new StringContent(type), "Type");
 
-            var response = await _httpClient.PostAsync(_apiBaseUrl, formData);
+            var response = await _httpClient.PostAsync($"{_apiBaseUrl}/recordAttendance", formData);
 
             if (!response.IsSuccessStatusCode)
             {

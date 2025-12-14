@@ -81,6 +81,29 @@ namespace frontend.Services
 
             return userData;
         }
+
+        public async Task<System.Collections.Generic.List<UserDataResponse>> GetUsersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(_apiBaseUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new System.Collections.Generic.List<UserDataResponse>();
+                }
+
+                var jsonContent = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var users = JsonSerializer.Deserialize<System.Collections.Generic.List<UserDataResponse>>(jsonContent, options);
+                return users ?? new System.Collections.Generic.List<UserDataResponse>();
+            }
+            catch
+            {
+                // Log error or handle appropriately
+                return new System.Collections.Generic.List<UserDataResponse>();
+            }
+        }
     }
 }
 

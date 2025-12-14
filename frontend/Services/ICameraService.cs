@@ -21,7 +21,12 @@ namespace frontend.Services
         bool IsOpened { get; }
 
         /// <summary>
-        /// Starts the camera.
+        /// Initializes the camera hardware asynchronously.
+        /// </summary>
+        System.Threading.Tasks.Task InitializeAsync();
+
+        /// <summary>
+        /// Starts the camera capture.
         /// </summary>
         void Start();
 

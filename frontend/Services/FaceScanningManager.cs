@@ -79,12 +79,30 @@ namespace frontend.Services
         /// </summary>
         public async Task StartAsync()
         {
-            if (!_faceDetector.IsReady)
+            try
             {
-                await _faceDetector.InitializeAsync();
-            }
+                // Show loading state
+                OnLoadingChanged("Initializing systems...");
 
-            _cameraService.Start();
+                // Initialize detector and camera in parallel to save time
+                var detTask = _faceDetector.IsReady ? Task.CompletedTask : _faceDetector.InitializeAsync();
+                
+                // Initialize camera asynchronously to allow UI updates
+                var camTask = _cameraService.InitializeAsync();
+
+                await Task.WhenAll(detTask, camTask);
+
+                OnLoadingChanged(""); // Clear loading
+
+                // Now start the camera capture (synchronous, but fast since already initialized)
+                _cameraService.Start();
+            }
+            catch (Exception ex)
+            {
+                OnLoadingChanged("");
+                OnStatusChanged("Failed to start system");
+                System.Diagnostics.Debug.WriteLine($"Error starting system: {ex}");
+            }
         }
 
         /// <summary>
@@ -95,31 +113,61 @@ namespace frontend.Services
             _cameraService.Stop();
         }
 
+        private bool _isDetecting = false;
+        private int _frameCount = 0;
+        private const int GcInterval = 300; // Run GC every ~300 frames (approx 10 sec at 30fps)
+
         private void OnFrameCaptured(object? sender, Mat frame)
         {
-            if (_isProcessing || !_faceDetector.IsReady)
+            // Concurrency control: skip frame if already processing or detecting
+            if (_isDetecting || _isProcessing || !_faceDetector.IsReady)
+            {
+                // Dispose the unused frame to prevent memory leak as CameraService creates a new one each time
+                frame.Dispose();
                 return;
-
-            try
-            {
-                // Convert to RGB for display
-                using Mat rgbFrame = new Mat();
-                CvInvoke.CvtColor(frame, rgbFrame, ColorConversion.Bgr2Rgb);
-
-                // Detect faces
-                Rectangle[] faces = _faceDetector.DetectFaces(frame);
-
-                // Draw bounding boxes and process faces
-                ProcessDetectedFaces(faces, frame, rgbFrame);
-
-                // Display frame
-                Bitmap displayBitmap = _imageProcessor.MatToBitmapRgb(rgbFrame);
-                FrameProcessed?.Invoke(this, displayBitmap);
             }
-            catch (Exception ex)
+
+            _isDetecting = true;
+
+            // Periodic Memory Cleanup
+            _frameCount++;
+            if (_frameCount >= GcInterval)
             {
-                OnStatusChanged($"Error processing frame: {ex.Message}");
+                _frameCount = 0;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
+
+            // Offload to background thread
+            Task.Run(() =>
+            {
+                try
+                {
+                    // Convert to RGB for display
+                    using Mat rgbFrame = new Mat();
+                    CvInvoke.CvtColor(frame, rgbFrame, ColorConversion.Bgr2Rgb);
+
+                    // Detect faces
+                    Rectangle[] faces = _faceDetector.DetectFaces(frame);
+
+                    // Draw bounding boxes and process faces
+                    ProcessDetectedFaces(faces, frame, rgbFrame);
+
+                    // Display frame
+                    Bitmap displayBitmap = _imageProcessor.MatToBitmapRgb(rgbFrame);
+                    FrameProcessed?.Invoke(this, displayBitmap);
+                }
+                catch (Exception ex)
+                {
+                    OnStatusChanged("Error processing frame");
+                    System.Diagnostics.Debug.WriteLine($"Frame processing error: {ex}");
+                }
+                finally
+                {
+                    frame.Dispose();
+                    _isDetecting = false;
+                }
+            });
         }
 
         private void ProcessDetectedFaces(Rectangle[] faces, Mat originalFrame, Mat displayFrame)
@@ -215,7 +263,8 @@ namespace frontend.Services
             }
             catch (Exception ex)
             {
-                OnStatusChanged($"Error: {ex.Message}");
+                OnStatusChanged("Failed to record attendance");
+                System.Diagnostics.Debug.WriteLine($"Attendance error: {ex}");
             }
         }
 
@@ -232,8 +281,8 @@ namespace frontend.Services
             }
             catch (Exception ex)
             {
-                // Log error but don't fail the attendance recording
-                System.Diagnostics.Debug.WriteLine($"Failed to fetch user data: {ex.Message}");
+                // Log error but don't show to user since attendance was actually recorded
+                System.Diagnostics.Debug.WriteLine($"Failed to fetch user data: {ex}");
             }
         }
 
