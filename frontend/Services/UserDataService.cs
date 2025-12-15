@@ -104,6 +104,43 @@ namespace frontend.Services
                 return new System.Collections.Generic.List<UserDataResponse>();
             }
         }
+
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_apiBaseUrl}/{userId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<UserDataResponse> UpdateUserAsync(int userId, UserDataResponse user)
+        {
+            var json = JsonSerializer.Serialize(user);
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"{_apiBaseUrl}/{userId}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"User update failed: {response.StatusCode}");
+            }
+
+            var result = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var updatedUser = JsonSerializer.Deserialize<UserDataResponse>(result, options);
+
+            if (updatedUser == null)
+            {
+                throw new InvalidOperationException("Failed to parse updated user data");
+            }
+
+            return updatedUser;
+        }
     }
 }
 

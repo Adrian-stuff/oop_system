@@ -1,13 +1,21 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Lester Jayloni\\projects\\oop-system\\",
+  "WorkspaceRootPath": "C:\\Users\\Adrian\\projects\\oop_system\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend.csproj|c:\\users\\lester jayloni\\projects\\oop-system\\frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend.csproj|solutionrelative:frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend\\frontend.csproj|c:\\users\\adrian\\projects\\oop_system\\frontend\\dashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend\\frontend.csproj|solutionrelative:frontend\\dashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend.csproj|c:\\users\\lester jayloni\\projects\\oop-system\\frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend\\frontend.csproj|c:\\users\\adrian\\projects\\oop_system\\frontend\\services\\cameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend\\frontend.csproj|solutionrelative:frontend\\services\\cameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend\\frontend.csproj|c:\\users\\adrian\\projects\\oop_system\\frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend\\frontend.csproj|solutionrelative:frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend.csproj|C:\\Users\\Adrian\\projects\\oop_system\\frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{F7575659-3795-D654-7C13-9FD1B5855317}|frontend.csproj|solutionrelative:frontend\\facerecognitionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
@@ -18,40 +26,56 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Dashboard.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\Dashboard.cs",
+              "RelativeDocumentMoniker": "frontend\\Dashboard.cs",
+              "ToolTip": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\Dashboard.cs [Design]",
+              "RelativeToolTip": "frontend\\Dashboard.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:58:18.061Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CameraService.cs",
+              "DocumentMoniker": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\Services\\CameraService.cs",
+              "RelativeDocumentMoniker": "frontend\\Services\\CameraService.cs",
+              "ToolTip": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\Services\\CameraService.cs",
+              "RelativeToolTip": "frontend\\Services\\CameraService.cs",
+              "ViewState": "AgIAAIwAAAAAAAAAAADgv5MAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T20:55:55.556Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "FaceRecognitionForm.cs",
-              "DocumentMoniker": "C:\\Users\\Lester Jayloni\\projects\\oop-system\\frontend\\FaceRecognitionForm.cs",
+              "DocumentMoniker": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\FaceRecognitionForm.cs",
               "RelativeDocumentMoniker": "frontend\\FaceRecognitionForm.cs",
-              "ToolTip": "C:\\Users\\Lester Jayloni\\projects\\oop-system\\frontend\\FaceRecognitionForm.cs",
+              "ToolTip": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\FaceRecognitionForm.cs",
               "RelativeToolTip": "frontend\\FaceRecognitionForm.cs",
-              "ViewState": "AgIAALUAAAAAAAAAAAAcwBAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALcAAAAAAAAAAAAAAM8AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-14T11:50:17.225Z",
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "FaceRecognitionForm.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\Lester Jayloni\\projects\\oop-system\\frontend\\FaceRecognitionForm.cs",
+              "DocumentMoniker": "C:\\Users\\Adrian\\projects\\oop_system\\frontend\\FaceRecognitionForm.cs",
               "RelativeDocumentMoniker": "frontend\\FaceRecognitionForm.cs",
               "ToolTip": "C:\\Users\\Lester Jayloni\\projects\\oop-system\\frontend\\FaceRecognitionForm.cs [Design]",
-              "RelativeToolTip": "frontend\\FaceRecognitionForm.cs [Design]",
+              "RelativeToolTip": "..\\..\\..\\Lester Jayloni\\projects\\oop-system\\frontend\\FaceRecognitionForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-14T11:41:07.593Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-14T11:41:07.593Z"
             }
           ]
         }

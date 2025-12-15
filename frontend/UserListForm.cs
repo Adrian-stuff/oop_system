@@ -71,8 +71,10 @@ namespace frontend
                         userImage, 
                         user.FirstName + " " + user.LastName,
                         user.StudentNumber ?? "N/A",
-                        "View Profile", // Button text
-                        user.UserID // Hidden ID for click handling
+                        "View",   // View Button
+                        "Edit",   // Edit Button
+                        "Delete", // Delete Button
+                        user.UserID // Hidden ID
                     );
                 }
             }
@@ -82,23 +84,63 @@ namespace frontend
             }
         }
 
-        private void dgvUsers_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private async void dgvUsers_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Handle View Profile button click
-            if (e.RowIndex >= 0 && dgvUsers.Columns[e.ColumnIndex] is DataGridViewButtonColumn)
+            if (e.RowIndex < 0) return;
+
+            // Get User ID
+            var cellValue = dgvUsers.Rows[e.RowIndex].Cells["ColId"].Value;
+            if (cellValue == null || !int.TryParse(cellValue.ToString(), out int userId))
+                return;
+
+            string colName = dgvUsers.Columns[e.ColumnIndex].Name;
+
+            if (colName == "ColView")
             {
-                if (dgvUsers.Rows[e.RowIndex].Cells["ColId"].Value is int userId)
+                OpenUserProfile(userId);
+            }
+            else if (colName == "ColEdit")
+            {
+                await EditUser(userId);
+            }
+            else if (colName == "ColDelete")
+            {
+                await DeleteUser(userId, e.RowIndex);
+            }
+        }
+
+        private async Task EditUser(int userId)
+        {
+            var user = await _userDataService.GetUserDataAsync(userId);
+            if (user == null)
+            {
+                MessageBox.Show("User not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using var editForm = new EditUserForm(user, _userDataService);
+            if (editForm.ShowDialog(this) == DialogResult.OK)
+            {
+                await LoadUsersAsync(); // Reload list to reflect changes
+            }
+        }
+
+        private async Task DeleteUser(int userId, int rowIndex)
+        {
+            var result = MessageBox.Show("Are you sure you want to delete this user? This cannot be undone.", 
+                "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                bool success = await _userDataService.DeleteUserAsync(userId);
+                if (success)
                 {
-                    OpenUserProfile(userId);
+                    dgvUsers.Rows.RemoveAt(rowIndex);
+                    MessageBox.Show("User deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    // Try parsing if stored as object/string
-                    var val = dgvUsers.Rows[e.RowIndex].Cells["ColId"].Value;
-                    if (val != null && int.TryParse(val.ToString(), out int id))
-                    {
-                        OpenUserProfile(id);
-                    }
+                    MessageBox.Show("Failed to delete user.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

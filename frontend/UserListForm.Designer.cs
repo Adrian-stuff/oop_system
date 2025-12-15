@@ -22,7 +22,9 @@ namespace frontend
             ColImage = new DataGridViewImageColumn();
             ColName = new DataGridViewTextBoxColumn();
             ColStudentNumber = new DataGridViewTextBoxColumn();
-            ColAction = new DataGridViewButtonColumn();
+            ColView = new DataGridViewButtonColumn();
+            ColEdit = new DataGridViewButtonColumn();
+            ColDelete = new DataGridViewButtonColumn();
             ColId = new DataGridViewTextBoxColumn();
             lblTitle = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvUsers).BeginInit();
@@ -35,7 +37,7 @@ namespace frontend
             dgvUsers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvUsers.BackgroundColor = Color.FromArgb(46, 48, 68);
             dgvUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvUsers.Columns.AddRange(new DataGridViewColumn[] { ColImage, ColName, ColStudentNumber, ColAction, ColId });
+            dgvUsers.Columns.AddRange(new DataGridViewColumn[] { ColImage, ColName, ColStudentNumber, ColView, ColEdit, ColDelete, ColId });
             dgvUsers.Location = new Point(29, 52);
             dgvUsers.Margin = new Padding(3, 2, 3, 2);
             dgvUsers.Name = "dgvUsers";
@@ -68,13 +70,32 @@ namespace frontend
             ColStudentNumber.ReadOnly = true;
             ColStudentNumber.Width = 120;
             // 
-            // ColAction
+            // ColView
             // 
-            ColAction.HeaderText = "Action";
-            ColAction.Name = "ColAction";
-            ColAction.ReadOnly = true;
-            ColAction.Text = "View Profile";
-            ColAction.UseColumnTextForButtonValue = true;
+            ColView.HeaderText = "View";
+            ColView.Name = "ColView";
+            ColView.ReadOnly = true;
+            ColView.Text = "View";
+            ColView.UseColumnTextForButtonValue = true;
+            ColView.Width = 80;
+            // 
+            // ColEdit
+            // 
+            ColEdit.HeaderText = "Edit";
+            ColEdit.Name = "ColEdit";
+            ColEdit.ReadOnly = true;
+            ColEdit.Text = "Edit";
+            ColEdit.UseColumnTextForButtonValue = true;
+            ColEdit.Width = 80;
+            // 
+            // ColDelete
+            // 
+            ColDelete.HeaderText = "Delete";
+            ColDelete.Name = "ColDelete";
+            ColDelete.ReadOnly = true;
+            ColDelete.Text = "Delete";
+            ColDelete.UseColumnTextForButtonValue = true;
+            ColDelete.Width = 80;
             // 
             // ColId
             // 
@@ -119,7 +140,9 @@ namespace frontend
         private System.Windows.Forms.DataGridViewImageColumn ColImage;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColStudentNumber;
-        private System.Windows.Forms.DataGridViewButtonColumn ColAction;
+        private System.Windows.Forms.DataGridViewButtonColumn ColView;
+        private System.Windows.Forms.DataGridViewButtonColumn ColEdit;
+        private System.Windows.Forms.DataGridViewButtonColumn ColDelete;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColId;
         private System.Windows.Forms.TextBox lblTitle;
     }

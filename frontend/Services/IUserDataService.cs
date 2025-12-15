@@ -37,6 +37,21 @@ namespace frontend.Services
         /// </summary>
         /// <returns>List of users</returns>
         Task<System.Collections.Generic.List<UserDataResponse>> GetUsersAsync();
+
+        /// <summary>
+        /// Deletes a user by ID.
+        /// </summary>
+        /// <param name="userId">The user ID to delete</param>
+        /// <returns>True if successful</returns>
+        Task<bool> DeleteUserAsync(int userId);
+
+        /// <summary>
+        /// Updates a user's details.
+        /// </summary>
+        /// <param name="userId">The user ID to update</param>
+        /// <param name="user">The updated user data</param>
+        /// <returns>The updated user data</returns>
+        Task<UserDataResponse> UpdateUserAsync(int userId, UserDataResponse user);
     }
 
     /// <summary>

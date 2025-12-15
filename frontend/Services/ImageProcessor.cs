@@ -20,7 +20,8 @@ namespace frontend.Services
 
             // For BGR format (original camera frame)
             using Image<Bgr, byte> image = mat.ToImage<Bgr, byte>();
-            return image.AsBitmap();
+            using Bitmap temp = image.AsBitmap();
+            return new Bitmap(temp);
         }
 
         public Bitmap MatToBitmapRgb(Mat mat)
@@ -30,7 +31,8 @@ namespace frontend.Services
 
             // For RGB format (converted for display)
             using Image<Rgb, byte> image = mat.ToImage<Rgb, byte>();
-            return image.AsBitmap();
+            using Bitmap temp = image.AsBitmap();
+            return new Bitmap(temp);
         }
 
         public byte[] BitmapToJpegBytes(Bitmap bitmap, int quality = 90)
