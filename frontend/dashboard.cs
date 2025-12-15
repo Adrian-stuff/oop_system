@@ -28,7 +28,7 @@ namespace frontend
             try
             {
                 var attendances = await _attendanceService.GetAttendancesAsync();
-                
+
                 dataGridView1.AutoGenerateColumns = true;
                 dataGridView1.DataSource = attendances;
             }
@@ -40,10 +40,25 @@ namespace frontend
 
         private void btnViewUsers_Click(object sender, EventArgs e)
         {
-          
+
             var userDataService = new Services.UserDataService(new System.Net.Http.HttpClient(), "http://localhost:5207/api/UserDatas");
             var userListForm = new UserListForm(userDataService);
             userListForm.ShowDialog(this);
+        }
+
+        private void btnCloseButton_Click(object? sender, EventArgs e)
+        {
+            // 1. Instantiate the new page
+            AdminPage adminPage = new AdminPage();
+
+            // 2. Hide the current window (optional, but often cleaner than closing immediately)
+            this.Hide();
+
+            // 3. Show the new page as a dialog (blocks execution until AdminPage is closed)
+            adminPage.ShowDialog();
+
+            // 4. Close the original form when the new dialog is done (or show it again)
+            this.Close();
         }
     }
 }

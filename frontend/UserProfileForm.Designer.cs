@@ -18,102 +18,106 @@ namespace frontend
 
         private void InitializeComponent()
         {
-            this.pbProfile = new System.Windows.Forms.PictureBox();
-            this.lblName = new System.Windows.Forms.Label();
-            this.lblStudentNumber = new System.Windows.Forms.Label();
-            this.lblEmail = new System.Windows.Forms.Label();
-            this.lblBirthDate = new System.Windows.Forms.Label();
-            this.btnClose = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pbProfile)).BeginInit();
-            this.SuspendLayout();
+            pbProfile = new PictureBox();
+            lblName = new Label();
+            lblStudentNumber = new Label();
+            lblEmail = new Label();
+            lblBirthDate = new Label();
+            btnClose = new Button();
+            ((System.ComponentModel.ISupportInitialize)pbProfile).BeginInit();
+            SuspendLayout();
             // 
             // pbProfile
             // 
-            this.pbProfile.BackColor = System.Drawing.Color.Gray; // Placeholder color
-            this.pbProfile.Location = new System.Drawing.Point(150, 30);
-            this.pbProfile.Name = "pbProfile";
-            this.pbProfile.Size = new System.Drawing.Size(200, 200);
-            this.pbProfile.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbProfile.TabIndex = 0;
-            this.pbProfile.TabStop = false;
+            pbProfile.BackColor = Color.Gray;
+            pbProfile.Location = new Point(131, 22);
+            pbProfile.Margin = new Padding(3, 2, 3, 2);
+            pbProfile.Name = "pbProfile";
+            pbProfile.Size = new Size(175, 150);
+            pbProfile.SizeMode = PictureBoxSizeMode.StretchImage;
+            pbProfile.TabIndex = 0;
+            pbProfile.TabStop = false;
             // 
             // lblName
             // 
-            this.lblName.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold);
-            this.lblName.ForeColor = System.Drawing.Color.White;
-            this.lblName.Location = new System.Drawing.Point(50, 250);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(400, 40);
-            this.lblName.TabIndex = 1;
-            this.lblName.Text = "Loading Name...";
-            this.lblName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblName.Font = new Font("Bruno Ace SC", 15.7499981F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblName.ForeColor = Color.White;
+            lblName.Location = new Point(44, 188);
+            lblName.Name = "lblName";
+            lblName.Size = new Size(350, 30);
+            lblName.TabIndex = 1;
+            lblName.Text = "Loading Name...";
+            lblName.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblStudentNumber
             // 
-            this.lblStudentNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.lblStudentNumber.ForeColor = System.Drawing.Color.White;
-            this.lblStudentNumber.Location = new System.Drawing.Point(50, 300);
-            this.lblStudentNumber.Name = "lblStudentNumber";
-            this.lblStudentNumber.Size = new System.Drawing.Size(400, 30);
-            this.lblStudentNumber.TabIndex = 2;
-            this.lblStudentNumber.Text = "Student #";
-            this.lblStudentNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblStudentNumber.Font = new Font("Bruno Ace SC", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblStudentNumber.ForeColor = Color.White;
+            lblStudentNumber.Location = new Point(44, 225);
+            lblStudentNumber.Name = "lblStudentNumber";
+            lblStudentNumber.Size = new Size(350, 22);
+            lblStudentNumber.TabIndex = 2;
+            lblStudentNumber.Text = "Student #";
+            lblStudentNumber.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblEmail
             // 
-            this.lblEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.lblEmail.ForeColor = System.Drawing.Color.White;
-            this.lblEmail.Location = new System.Drawing.Point(50, 340);
-            this.lblEmail.Name = "lblEmail";
-            this.lblEmail.Size = new System.Drawing.Size(400, 30);
-            this.lblEmail.TabIndex = 3;
-            this.lblEmail.Text = "Email";
-            this.lblEmail.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblEmail.Font = new Font("Bruno Ace SC", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblEmail.ForeColor = Color.White;
+            lblEmail.Location = new Point(44, 255);
+            lblEmail.Name = "lblEmail";
+            lblEmail.Size = new Size(350, 22);
+            lblEmail.TabIndex = 3;
+            lblEmail.Text = "Email";
+            lblEmail.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblBirthDate
             // 
-            this.lblBirthDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.lblBirthDate.ForeColor = System.Drawing.Color.White;
-            this.lblBirthDate.Location = new System.Drawing.Point(50, 380);
-            this.lblBirthDate.Name = "lblBirthDate";
-            this.lblBirthDate.Size = new System.Drawing.Size(400, 30);
-            this.lblBirthDate.TabIndex = 4;
-            this.lblBirthDate.Text = "Birth Date";
-            this.lblBirthDate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblBirthDate.Font = new Font("Bruno Ace SC", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblBirthDate.ForeColor = Color.White;
+            lblBirthDate.Location = new Point(44, 285);
+            lblBirthDate.Name = "lblBirthDate";
+            lblBirthDate.Size = new Size(350, 19);
+            lblBirthDate.TabIndex = 4;
+            lblBirthDate.Text = "Birth Date";
+            lblBirthDate.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnClose
             // 
-            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(48)))), ((int)(((byte)(68)))));
-            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(200, 450);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(100, 40);
-            this.btnClose.TabIndex = 5;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = false;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            btnClose.BackColor = Color.FromArgb(198, 62, 62);
+            btnClose.FlatStyle = FlatStyle.Popup;
+            btnClose.Font = new Font("Bruno Ace SC", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnClose.ForeColor = Color.Black;
+            btnClose.Location = new Point(175, 338);
+            btnClose.Margin = new Padding(3, 2, 3, 2);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(88, 30);
+            btnClose.TabIndex = 5;
+            btnClose.Text = "Close";
+            btnClose.UseVisualStyleBackColor = false;
+            btnClose.Click += btnClose_Click;
             // 
             // UserProfileForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(38)))), ((int)(((byte)(58)))));
-            this.ClientSize = new System.Drawing.Size(500, 550);
-            this.Controls.Add(this.btnClose);
-            this.Controls.Add(this.lblBirthDate);
-            this.Controls.Add(this.lblEmail);
-            this.Controls.Add(this.lblStudentNumber);
-            this.Controls.Add(this.lblName);
-            this.Controls.Add(this.pbProfile);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.Name = "UserProfileForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "User Profile";
-            this.Load += new System.EventHandler(this.UserProfileForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pbProfile)).EndInit();
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(36, 38, 58);
+            ClientSize = new Size(438, 412);
+            Controls.Add(btnClose);
+            Controls.Add(lblBirthDate);
+            Controls.Add(lblEmail);
+            Controls.Add(lblStudentNumber);
+            Controls.Add(lblName);
+            Controls.Add(pbProfile);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(3, 2, 3, 2);
+            MaximizeBox = false;
+            Name = "UserProfileForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "User Profile";
+            Load += UserProfileForm_Load;
+            ((System.ComponentModel.ISupportInitialize)pbProfile).EndInit();
+            ResumeLayout(false);
 
         }
 

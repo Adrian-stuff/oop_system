@@ -18,115 +18,101 @@ namespace frontend
 
         private void InitializeComponent()
         {
-            this.dgvUsers = new System.Windows.Forms.DataGridView();
-            this.ColImage = new System.Windows.Forms.DataGridViewImageColumn();
-            this.ColName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColStudentNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColAction = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.ColId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblTitle = new System.Windows.Forms.TextBox();
-
-            ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).BeginInit();
-            this.SuspendLayout();
-
-            // 
-            // lblTitle
-            // 
-            this.lblTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(38)))), ((int)(((byte)(58)))));
-            this.lblTitle.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(33, 20);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.ReadOnly = true;
-            this.lblTitle.Size = new System.Drawing.Size(270, 31);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "USER LIST";
-
+            dgvUsers = new DataGridView();
+            ColImage = new DataGridViewImageColumn();
+            ColName = new DataGridViewTextBoxColumn();
+            ColStudentNumber = new DataGridViewTextBoxColumn();
+            ColAction = new DataGridViewButtonColumn();
+            ColId = new DataGridViewTextBoxColumn();
+            lblTitle = new TextBox();
+            ((System.ComponentModel.ISupportInitialize)dgvUsers).BeginInit();
+            SuspendLayout();
             // 
             // dgvUsers
             // 
-            this.dgvUsers.AllowUserToAddRows = false;
-            this.dgvUsers.AllowUserToDeleteRows = false;
-            this.dgvUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvUsers.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(48)))), ((int)(((byte)(68)))));
-            this.dgvUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvUsers.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ColImage,
-            this.ColName,
-            this.ColStudentNumber,
-            this.ColAction,
-            this.ColId});
-            this.dgvUsers.Location = new System.Drawing.Point(33, 70);
-            this.dgvUsers.Name = "dgvUsers";
-            this.dgvUsers.ReadOnly = true;
-            this.dgvUsers.RowHeadersVisible = false;
-            this.dgvUsers.RowTemplate.Height = 60; // Taller rows for images
-            this.dgvUsers.Size = new System.Drawing.Size(700, 500);
-            this.dgvUsers.TabIndex = 1;
-            this.dgvUsers.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvUsers_CellContentClick);
-
+            dgvUsers.AllowUserToAddRows = false;
+            dgvUsers.AllowUserToDeleteRows = false;
+            dgvUsers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvUsers.BackgroundColor = Color.FromArgb(46, 48, 68);
+            dgvUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvUsers.Columns.AddRange(new DataGridViewColumn[] { ColImage, ColName, ColStudentNumber, ColAction, ColId });
+            dgvUsers.Location = new Point(29, 52);
+            dgvUsers.Margin = new Padding(3, 2, 3, 2);
+            dgvUsers.Name = "dgvUsers";
+            dgvUsers.ReadOnly = true;
+            dgvUsers.RowHeadersVisible = false;
+            dgvUsers.RowTemplate.Height = 60;
+            dgvUsers.Size = new Size(612, 375);
+            dgvUsers.TabIndex = 1;
+            dgvUsers.CellContentClick += dgvUsers_CellContentClick;
             // 
             // ColImage
             // 
-            this.ColImage.HeaderText = "Image";
-            this.ColImage.Name = "ColImage";
-            this.ColImage.ReadOnly = true;
-            this.ColImage.ImageLayout = DataGridViewImageCellLayout.Zoom;
-            this.ColImage.Width = 80;
-
+            ColImage.HeaderText = "Image";
+            ColImage.ImageLayout = DataGridViewImageCellLayout.Zoom;
+            ColImage.Name = "ColImage";
+            ColImage.ReadOnly = true;
+            ColImage.Width = 80;
             // 
             // ColName
             // 
-            this.ColName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ColName.HeaderText = "Name";
-            this.ColName.Name = "ColName";
-            this.ColName.ReadOnly = true;
-
+            ColName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ColName.HeaderText = "Name";
+            ColName.Name = "ColName";
+            ColName.ReadOnly = true;
             // 
             // ColStudentNumber
             // 
-            this.ColStudentNumber.HeaderText = "Student #";
-            this.ColStudentNumber.Name = "ColStudentNumber";
-            this.ColStudentNumber.ReadOnly = true;
-            this.ColStudentNumber.Width = 120;
-
+            ColStudentNumber.HeaderText = "Student #";
+            ColStudentNumber.Name = "ColStudentNumber";
+            ColStudentNumber.ReadOnly = true;
+            ColStudentNumber.Width = 120;
             // 
             // ColAction
             // 
-            this.ColAction.HeaderText = "Action";
-            this.ColAction.Name = "ColAction";
-            this.ColAction.ReadOnly = true;
-            this.ColAction.Text = "View Profile";
-            this.ColAction.UseColumnTextForButtonValue = true;
-            this.ColAction.Width = 100;
-
+            ColAction.HeaderText = "Action";
+            ColAction.Name = "ColAction";
+            ColAction.ReadOnly = true;
+            ColAction.Text = "View Profile";
+            ColAction.UseColumnTextForButtonValue = true;
             // 
-            // ColId (Hidden)
+            // ColId
             // 
-            this.ColId.HeaderText = "ID";
-            this.ColId.Name = "ColId";
-            this.ColId.ReadOnly = true;
-            this.ColId.Visible = false;
-
+            ColId.HeaderText = "ID";
+            ColId.Name = "ColId";
+            ColId.ReadOnly = true;
+            ColId.Visible = false;
+            // 
+            // lblTitle
+            // 
+            lblTitle.BackColor = Color.FromArgb(36, 38, 58);
+            lblTitle.BorderStyle = BorderStyle.None;
+            lblTitle.Font = new Font("Bruno Ace SC", 20.2499962F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(29, 15);
+            lblTitle.Margin = new Padding(3, 2, 3, 2);
+            lblTitle.Name = "lblTitle";
+            lblTitle.ReadOnly = true;
+            lblTitle.Size = new Size(236, 33);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "USER LIST";
             // 
             // UserListForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F); // Adjusted for high DPI slightly or match original but this is safer standard
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(38)))), ((int)(((byte)(58)))));
-            this.ClientSize = new System.Drawing.Size(800, 600);
-            this.Controls.Add(this.dgvUsers);
-            this.Controls.Add(this.lblTitle);
-            this.Name = "UserListForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "User List";
-            this.Load += new System.EventHandler(this.UserListForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(36, 38, 58);
+            ClientSize = new Size(700, 450);
+            Controls.Add(dgvUsers);
+            Controls.Add(lblTitle);
+            Margin = new Padding(3, 2, 3, 2);
+            Name = "UserListForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "User List";
+            Load += UserListForm_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvUsers).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.DataGridView dgvUsers;

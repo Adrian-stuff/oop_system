@@ -41,7 +41,7 @@ namespace frontend
                     lblName.Text = $"{user.FirstName} {user.LastName}";
                     lblStudentNumber.Text = $"Student #: {user.StudentNumber ?? "N/A"}";
                     lblEmail.Text = $"Email: {user.Email}";
-                    lblBirthDate.Text = $"Birth Date: {user.BirthDate}";
+                    lblBirthDate.Text = $"Birth Date: {user.BirthDate.Split("T")[0].Replace("-","/")}";
                     
                     try
                     {
